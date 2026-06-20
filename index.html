@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="hu" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Interactive app to learn the Hungarian highway code (KRESZ): road sign explanations, every vehicle category and quizzes. Dark/light themes, Hungarian & English."
+    />
+    <meta name="theme-color" content="#0050a0" />
+    <title>KRESZ Tanuló · Hungarian Road Code</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,8 94,84 6,84' fill='%23fff' stroke='%23e4002b' stroke-width='8' stroke-linejoin='round'/%3E%3Ctext x='50' y='66' font-size='42' font-family='Arial' font-weight='800' text-anchor='middle' fill='%231a1a1a'%3E!%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <!-- Set theme & language before first paint to avoid a flash -->
+    <script>
+      (function () {
+        try {
+          var th =
+            localStorage.getItem("kresz.theme") ||
+            (window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light");
+          document.documentElement.setAttribute("data-theme", th);
+          var lg = localStorage.getItem("kresz.lang");
+          if (lg) document.documentElement.lang = lg;
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <div style="padding:20px;text-align:center;background:#e4002b;color:#fff;font-family:sans-serif">
+        Ez az alkalmazás JavaScriptet igényel. · This app requires JavaScript to run.
+      </div>
+    </noscript>
+
+    <!-- Animated ambient background -->
+    <div class="bg-aurora" aria-hidden="true">
+      <span class="blob blob-1"></span>
+      <span class="blob blob-2"></span>
+      <span class="blob blob-3"></span>
+      <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Theme transition flash -->
+    <div class="theme-flash" aria-hidden="true"></div>
+
+    <!-- ======================= HEADER ======================= -->
+    <header class="site-header" id="siteHeader">
+      <div class="container header-inner">
+        <a class="brand" href="#home" data-view-link="home" aria-label="KRESZ">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 100 100">
+              <polygon points="50,10 92,82 8,82" fill="#fff" stroke="#e4002b" stroke-width="9" stroke-linejoin="round" />
+              <rect x="44" y="34" width="12" height="26" rx="3" fill="#1a1a1a" />
+              <circle cx="50" cy="70" r="6" fill="#1a1a1a" />
+            </svg>
+          </span>
+          <span class="brand-text">
+            <strong data-i18n="app.title">KRESZ Tanuló</strong>
+            <small data-i18n="app.tagline">Magyar közlekedési szabályok</small>
+          </span>
+        </a>
+
+        <nav class="main-nav" id="mainNav" aria-label="Main">
+          <button class="nav-link active" data-view-link="home" data-i18n="nav.home">Főoldal</button>
+          <button class="nav-link" data-view-link="signs" data-i18n="nav.signs">Táblák</button>
+          <button class="nav-link" data-view-link="vehicles" data-i18n="nav.vehicles">Járművek</button>
+          <button class="nav-link" data-view-link="quiz" data-i18n="nav.quiz">Kvíz</button>
+          <button class="nav-link" data-view-link="about" data-i18n="nav.about">Névjegy</button>
+        </nav>
+
+        <div class="header-controls">
+          <button class="ctrl-btn lang-toggle" id="langToggle" aria-label="Switch language" title="HU / EN">
+            <span class="lang-current">HU</span>
+          </button>
+
+          <button class="ctrl-btn theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Theme">
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+            </svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+
+          <button class="ctrl-btn menu-toggle" id="menuToggle" aria-label="Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+      <div class="header-progress" id="scrollProgress" aria-hidden="true"></div>
+    </header>
+
+    <!-- Mobile nav drawer -->
+    <div class="mobile-drawer" id="mobileDrawer" aria-hidden="true">
+      <button class="nav-link" data-view-link="home" data-i18n="nav.home">Főoldal</button>
+      <button class="nav-link" data-view-link="signs" data-i18n="nav.signs">Táblák</button>
+      <button class="nav-link" data-view-link="vehicles" data-i18n="nav.vehicles">Járművek</button>
+      <button class="nav-link" data-view-link="quiz" data-i18n="nav.quiz">Kvíz</button>
+      <button class="nav-link" data-view-link="about" data-i18n="nav.about">Névjegy</button>
+    </div>
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+    <!-- ======================= MAIN ======================= -->
+    <main id="main">
+      <!-- ---------- HOME ---------- -->
+      <section class="view active" data-view="home" id="view-home">
+        <div class="hero">
+          <div class="container hero-grid">
+            <div class="hero-copy">
+              <span class="hero-badge reveal" data-i18n="hero.badge">Magyarország · KRESZ</span>
+              <h1 class="hero-title reveal" data-i18n="hero.title">Tanuld meg a KRESZ-t okosan</h1>
+              <p class="hero-subtitle reveal" data-i18n="hero.subtitle">
+                Interaktív magyarázatok a közúti jelzőtáblákról…
+              </p>
+              <div class="hero-actions reveal">
+                <button class="btn btn-primary" data-view-link="signs">
+                  <span data-i18n="hero.cta.signs">Táblák felfedezése</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </button>
+                <button class="btn btn-ghost" data-view-link="quiz" data-i18n="hero.cta.quiz">Kvíz indítása</button>
+              </div>
+
+              <div class="hero-stats reveal">
+                <div class="stat">
+                  <span class="stat-num" data-count="60">0</span><span class="stat-plus">+</span>
+                  <small data-i18n="hero.stat.signs">Közlekedési tábla</small>
+                </div>
+                <div class="stat">
+                  <span class="stat-num" data-count="11">0</span>
+                  <small data-i18n="hero.stat.vehicles">Járműkategória</small>
+                </div>
+                <div class="stat">
+                  <span class="stat-num" data-count="45">0</span>
+                  <small data-i18n="hero.stat.questions">Kvízkérdés</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="hero-visual reveal" id="heroVisual" aria-hidden="true">
+              <!-- floating sign cards injected by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Features -->
+        <div class="container section">
+          <header class="section-head reveal">
+            <h2 data-i18n="home.features.title">Amit a KRESZ Tanuló kínál</h2>
+            <p data-i18n="home.features.subtitle">Minden, ami a sikeres vizsgához kell.</p>
+          </header>
+          <div class="feature-grid" id="featureGrid"><!-- injected --></div>
+        </div>
+
+        <!-- CTA banner -->
+        <div class="container section">
+          <div class="cta-banner reveal">
+            <div class="cta-copy">
+              <h2 data-i18n="home.cta.title">Készen állsz a vizsgára?</h2>
+              <p data-i18n="home.cta.desc">Tedd próbára a tudásod egy gyors kvízzel.</p>
+            </div>
+            <button class="btn btn-light" data-view-link="quiz" data-i18n="home.cta.button">Kezdjük!</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- SIGNS ---------- -->
+      <section class="view" data-view="signs" id="view-signs">
+        <div class="container section">
+          <header class="section-head reveal">
+            <h2 data-i18n="signs.title">Közlekedési táblák</h2>
+            <p data-i18n="signs.subtitle">Böngészd a táblákat kategóriánként.</p>
+          </header>
+
+          <div class="signs-toolbar reveal">
+            <div class="search-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+              <input type="search" id="signSearch" data-i18n-attr="placeholder|signs.search.placeholder" placeholder="Keresés…" />
+            </div>
+            <div class="filter-chips" id="signFilters"><!-- injected --></div>
+          </div>
+
+          <p class="result-count" id="signCount"></p>
+          <div class="signs-grid" id="signsGrid"><!-- injected --></div>
+          <p class="empty-state" id="signsEmpty" hidden data-i18n="signs.empty">Nincs találat.</p>
+        </div>
+      </section>
+
+      <!-- ---------- VEHICLES ---------- -->
+      <section class="view" data-view="vehicles" id="view-vehicles">
+        <div class="container section">
+          <header class="section-head reveal">
+            <h2 data-i18n="vehicles.title">Járműkategóriák</h2>
+            <p data-i18n="vehicles.subtitle">A magyar vezetői engedély kategóriái.</p>
+          </header>
+          <div class="vehicle-grid" id="vehicleGrid"><!-- injected --></div>
+        </div>
+      </section>
+
+      <!-- ---------- QUIZ ---------- -->
+      <section class="view" data-view="quiz" id="view-quiz">
+        <div class="container section">
+          <header class="section-head reveal">
+            <h2 data-i18n="quiz.title">KRESZ Kvíz</h2>
+            <p data-i18n="quiz.subtitle">Válassz egy témát, és tedd próbára a tudásod!</p>
+          </header>
+          <div id="quizMount"><!-- quiz UI injected --></div>
+        </div>
+      </section>
+
+      <!-- ---------- ABOUT ---------- -->
+      <section class="view" data-view="about" id="view-about">
+        <div class="container section narrow">
+          <header class="section-head reveal">
+            <h2 data-i18n="about.title">A KRESZ Tanulóról</h2>
+          </header>
+          <div class="about-card reveal">
+            <p class="lead" data-i18n="about.intro"></p>
+
+            <h3 data-i18n="about.features.title">Funkciók</h3>
+            <ul class="check-list">
+              <li data-i18n="about.feat.1"></li>
+              <li data-i18n="about.feat.2"></li>
+              <li data-i18n="about.feat.3"></li>
+              <li data-i18n="about.feat.4"></li>
+              <li data-i18n="about.feat.5"></li>
+            </ul>
+
+            <h3 data-i18n="about.tech.title">Hogyan használd</h3>
+            <p data-i18n="about.tech.text"></p>
+
+            <div class="callout">
+              <strong data-i18n="about.disclaimer.title">Fontos megjegyzés</strong>
+              <p data-i18n="about.disclaimer.text"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ======================= FOOTER ======================= -->
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-brand">
+          <strong data-i18n="app.title">KRESZ Tanuló</strong>
+          <span data-i18n="footer.made">Készült a biztonságosabb közlekedésért</span>
+        </div>
+        <p class="footer-note" data-i18n="footer.disclaimer">Oktatási célú alkalmazás.</p>
+      </div>
+    </footer>
+
+    <!-- ======================= SIGN MODAL ======================= -->
+    <div class="modal" id="signModal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="modal-backdrop" data-close-modal></div>
+      <div class="modal-card" role="document">
+        <button class="modal-close" data-close-modal aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <div class="modal-body" id="signModalBody"><!-- injected --></div>
+        <div class="modal-nav">
+          <button class="btn btn-ghost" id="signPrev"><span data-i18n="signs.detail.prev">Előző</span></button>
+          <button class="btn btn-ghost" id="signNext"><span data-i18n="signs.detail.next">Következő</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================= SCRIPTS ======================= -->
+    <!-- data first -->
+    <script src="js/data/translations.js"></script>
+    <script src="js/data/signs-data.js"></script>
+    <script src="js/data/vehicles-data.js"></script>
+    <script src="js/data/quiz-data.js"></script>
+    <!-- logic -->
+    <script src="js/i18n.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/signs.js"></script>
+    <script src="js/vehicles.js"></script>
+    <script src="js/quiz.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
