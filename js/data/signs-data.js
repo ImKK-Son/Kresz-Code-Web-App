@@ -49,11 +49,12 @@
     </g>`;
 
   const moped = (cx, cy, s, fill) =>
-    `<g transform="translate(${cx},${cy}) scale(${s})" fill="${fill}">
-      <circle cx="-13" cy="8" r="6.5" fill="none" stroke="${fill}" stroke-width="2.6"/>
-      <circle cx="13" cy="8" r="6.5" fill="none" stroke="${fill}" stroke-width="2.6"/>
-      <path d="M-13,8 l8,-12 h10 l4,5 h6 l-2,4 h-9 l-4,-5 h-6 z" />
-      <path d="M5,-4 l4,-6 h6" fill="none" stroke="${fill}" stroke-width="2.6" stroke-linecap="round"/>
+    `<g transform="translate(${cx},${cy}) scale(${s}) translate(-50,-53)" fill="none" stroke="${fill}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="33" cy="61" r="9"/>
+      <circle cx="67" cy="61" r="9"/>
+      <path d="M33,61 q2,-13 13,-13 h9 q6,0 9,7 l3,6" stroke-width="5"/>
+      <path d="M45,48 l-3,-12 h13"/>
+      <path d="M45,46 q9,-2 17,3 l-1,4 h-16 z" fill="${fill}" stroke="none"/>
     </g>`;
 
   const motorcycle = (cx, cy, s, fill) =>
@@ -84,12 +85,25 @@
     </g>`;
 
   const deer = (cx, cy, s, fill) =>
-    `<g transform="translate(${cx},${cy}) scale(${s})" fill="${fill}">
-      <path d="M14,-18 l3,-6 1,5 4,-3 -2,5 4,0 -5,4 -4,2 q-3,2 -3,6 l1,16 -3,0 -2,-12 -7,0 -2,12 -3,0 1,-14 q-6,-2 -8,-8 l-4,1 1,-4 5,-1 q4,-7 12,-7 6,0 8,3z"/>
+    `<g transform="translate(${cx},${cy}) scale(${s}) translate(-48,-51)" fill="${fill}" stroke="${fill}">
+      <ellipse cx="43" cy="53" rx="16" ry="9" transform="rotate(-8 43 53)" stroke="none"/>
+      <path d="M55,49 q5,-4 6,-11" fill="none" stroke-width="7" stroke-linecap="round"/>
+      <path d="M60,40 q4,-1 7,0" fill="none" stroke-width="6" stroke-linecap="round"/>
+      <path d="M60,35 l-3,-8 M64,35 l1,-9 M58,33 l-6,-3 M66,34 l6,-5" fill="none" stroke-width="2.2" stroke-linecap="round"/>
+      <g stroke-width="3.8" stroke-linecap="round" fill="none">
+        <line x1="36" y1="59" x2="32" y2="75"/><line x1="43" y1="61" x2="44" y2="76"/>
+        <line x1="49" y1="59" x2="54" y2="74"/><line x1="30" y1="55" x2="25" y2="69"/>
+      </g>
     </g>`;
 
   const arrow = (rot, fill) =>
     `<g transform="rotate(${rot} 50 50)"><path d="M50,24 l16,20 h-9 v22 h-14 v-22 h-9z" fill="${fill}"/></g>`;
+
+  // Vertical priority arrow (up/down) used by the "priority over oncoming" pair.
+  const priArrow = (x, up, color) =>
+    up
+      ? `<g stroke="${color}" fill="${color}"><line x1="${x}" y1="46" x2="${x}" y2="74" stroke-width="7" stroke-linecap="round"/><path d="M${x},26 l-9,17 18,0z"/></g>`
+      : `<g stroke="${color}" fill="${color}"><line x1="${x}" y1="26" x2="${x}" y2="54" stroke-width="7" stroke-linecap="round"/><path d="M${x},74 l-9,-17 18,0z"/></g>`;
 
   const bar = (fill) =>
     `<rect x="22" y="44" width="56" height="12" rx="2" fill="${fill || WHITE}"/>`;
@@ -182,7 +196,7 @@
         en: "Road works or maintenance ahead. Slow down, keep a safe distance and follow any diversions.",
       },
       svg: warn(
-        `<g fill="${BLACK}"><circle cx="48" cy="40" r="4"/><path d="M44,46 h8 l4,18 -4,2 -4,-14 -4,14 -4,-2z"/><line x1="50" y1="50" x2="72" y2="40" stroke="${BLACK}" stroke-width="3"/><path d="M68,34 l10,2 -3,9z"/></g>`
+        `<g stroke="${BLACK}" stroke-width="5" stroke-linecap="round" fill="none"><line x1="45" y1="50" x2="41" y2="64"/><line x1="41" y1="64" x2="34" y2="79"/><line x1="41" y1="64" x2="49" y2="79"/><line x1="46" y1="52" x2="63" y2="45"/></g><circle cx="47" cy="42" r="5.5" fill="${BLACK}"/><g fill="${BLACK}" stroke="${BLACK}" stroke-width="3"><line x1="60" y1="42" x2="67" y2="62"/><path d="M61,59 l9,-2 0,9 -8,0z" stroke="none"/></g><path d="M28,80 q15,-11 33,-1 l0,3 -33,0z" fill="${BLACK}" stroke="none"/>`
       ),
     },
     {
@@ -353,9 +367,7 @@
         hu: "Szűk útszakaszon neked van elsőbbséged a szemből érkezőkkel szemben (fekete nyíl). A piros nyíl iránya köteles várakozni.",
         en: "On a narrow section you have priority over oncoming traffic (black arrow). The red-arrow direction must wait.",
       },
-      svg: info(
-        `<path d="M40,72 V32 l-7,9 14,0z" fill="${BLACK}" stroke="${BLACK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M62,28 V68 l-7,-9 14,0z" fill="${RED}" stroke="${RED}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`
-      ),
+      svg: info(priArrow(42, true, BLACK) + priArrow(58, false, RED)),
     },
     {
       id: "p-give-way-oncoming",
@@ -365,9 +377,7 @@
         hu: "Szűk útszakaszon a szemből érkezőknek van elsőbbsége. A piros nyíl iránya (te) köteles megvárni a szembejövőket.",
         en: "On a narrow section oncoming traffic has priority. The red-arrow direction (you) must wait for them.",
       },
-      svg: prohibit(
-        `<path d="M40,72 V28 l-7,9 14,0z" fill="${RED}" stroke="${RED}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M62,28 V72 l-7,-9 14,0z" fill="${BLACK}" stroke="${BLACK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`
-      ),
+      svg: prohibit(priArrow(42, true, RED) + priArrow(58, false, BLACK)),
     },
 
     // ---------------- PROHIBITORY (Tilalmi) ----------------

@@ -22,10 +22,13 @@ quizzes — all in a sleek, animated interface with **dark/light themes** and a
   (**A1 / A2 / A**), car (**B / B+E**), truck (**C / C+E**), bus (**D**) and
   agricultural tractor (**T**) — each with minimum age, speed limits, what it
   lets you drive, and the key rules.
-- **🧠 Smart quizzes** — Pick a topic or a specific vehicle category, choose the
-  length, and get **instant feedback + an explanation** for every question.
-  Shuffled questions and answers, progress bar, animated score ring, confetti
-  on great scores, an answer review, and your **best score saved locally**.
+- **🧠 Smart quizzes** — A bank of **150+ questions**: rule questions for every
+  topic and vehicle category (general, priority, moped, motorcycle, car, truck,
+  bus, bicycle) **plus an automatically generated recognition question for every
+  road sign**. Pick a topic or vehicle category, choose the length, and get
+  **instant feedback + an explanation** for every question. Shuffled questions
+  and answers, progress bar, animated score ring, confetti on great scores, an
+  answer review, and your **best score saved locally**.
 - **🎨 Customisation** — One-tap **dark/light** theme and **HU/EN** language
   toggle; both persist in your browser.
 - **💫 Many animations** — Animated aurora background, scroll-reveal, floating

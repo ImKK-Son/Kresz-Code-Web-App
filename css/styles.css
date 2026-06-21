@@ -438,6 +438,7 @@ input {
   aspect-ratio: 1 / 1;
   display: grid;
   place-items: center;
+  pointer-events: none; /* decorative; never intercept button clicks */
 }
 .hero-orbit {
   position: absolute;
@@ -536,6 +537,7 @@ input {
   width: 380px; height: 380px;
   background: radial-gradient(circle, rgba(255,255,255,0.25), transparent 70%);
   top: -160px; right: -80px;
+  pointer-events: none;
 }
 .cta-copy h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); color: #fff; -webkit-text-fill-color: #fff; }
 .cta-copy p { opacity: 0.9; margin-top: 6px; }
